@@ -6,6 +6,10 @@ import 'package:magic_table/Views/new_record_popup.dart';
 import 'package:magic_table/Views/pointing_page.dart';
 import 'package:magic_table/Views/record_list.dart';
 import 'package:magic_table/Views/statistics_page.dart';
+import 'package:magic_table/theme/app_colors.dart';
+import 'package:magic_table/theme/app_text_styles.dart';
+import 'package:magic_table/widgets/gradient_icon_button.dart';
+import 'package:magic_table/widgets/player_summary_card.dart';
 
 class RecordsPage extends StatelessWidget {
   final RxList<UserPoint> userPoints;
@@ -17,16 +21,7 @@ class RecordsPage extends StatelessWidget {
     required this.records,
   }) : super(key: key);
 
-  Color _getGradientColor(int index, double opacity) {
-    final colors = [
-      Colors.blue,
-      Colors.purple,
-      Colors.pink,
-      Colors.orange,
-      Colors.teal,
-    ];
-    return colors[index % colors.length].withOpacity(opacity);
-  }
+
 
   void addNewRecord(BuildContext context) {
     Map<String, RoundPoint> map = {};
@@ -55,7 +50,7 @@ class RecordsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1a1a1a),
+      backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
         child: Column(
           children: [
@@ -68,65 +63,29 @@ class RecordsPage extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  const Text(
-                    'Records',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const Text('Records', style: AppTextStyles.title),
                   const Spacer(),
                   // Statistics button
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6a11cb), Color(0xFF2575fc)],
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6a11cb).withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.bar_chart, color: Colors.white, size: 28),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StatisticsPage(
-                              records: records,
-                              userPoints: userPoints,
-                            ),
+                  GradientIconButton(
+                    icon: Icons.bar_chart,
+                    gradient: AppColors.blueGradient,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StatisticsPage(
+                            records: records,
+                            userPoints: userPoints,
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 20),
                   // Add button
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF667eea).withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.add, color: Colors.white, size: 28),
-                      onPressed: () => addNewRecord(context),
-                    ),
+                  GradientIconButton(
+                    icon: Icons.add,
+                    onPressed: () => addNewRecord(context),
                   ),
                 ],
               ),
@@ -139,86 +98,10 @@ class RecordsPage extends StatelessWidget {
                 children: userPoints.asMap().entries.map((entry) {
                   final index = entry.key;
                   final player = entry.value;
-                  return Expanded(
-                    child: Container(
-                      height: 80,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            _getGradientColor(index, 0.8),
-                            _getGradientColor(index, 1.0),
-                          ],
-                        ),
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.2),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: _getGradientColor(index, 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final name = player.name.toUpperCase();
-                          double fontSize = 14.0;
-                          
-                          // Keep reducing font size until text fits
-                          while (fontSize > 8.0) {
-                            final textPainter = TextPainter(
-                              text: TextSpan(
-                                text: name,
-                                style: TextStyle(
-                                  fontSize: fontSize,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              maxLines: 1,
-                              textDirection: TextDirection.ltr,
-                            )..layout();
-                            
-                            if (textPainter.width <= constraints.maxWidth) {
-                              break;
-                            }
-                            fontSize -= 1.0;
-                          }
-                          
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  name,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                player.point.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+                  return PlayerSummaryCard(
+                    playerName: player.name,
+                    totalScore: player.point,
+                    colorIndex: index,
                   );
                 }).toList(),
               )),

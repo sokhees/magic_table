@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:magic_table/Views/pointing_page.dart';
+import 'package:magic_table/widgets/player_card.dart';
 
 class CardStyleView extends StatelessWidget {
   final RxList<UserPoint> userPoints;
@@ -44,73 +45,19 @@ class CardStyleView extends StatelessWidget {
       final cardsList = userPoints.asMap().entries.map((entry) {
         final index = entry.key;
         final user = entry.value;
+        final latestRecord = (records.isNotEmpty && records.first.containsKey(user.name))
+            ? records.first[user.name]
+            : null;
         
-        return GestureDetector(
-          onTap: () => onCardTap(index),
-          onLongPress: () => onLongPress(index),
-          child: Container(
-            height: needsMinHeight ? cardHeight : null,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _getGradientColor(index, 0.8),
-                  _getGradientColor(index, 1.0),
-                ],
-              ),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: Text(
-                    user.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    user.point.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 100,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                // Latest record at bottom right
-                if (records.isNotEmpty && records.first.containsKey(user.name))
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        records.first[user.name]! >= 0
-                            ? '+${records.first[user.name]}'
-                            : '${records.first[user.name]}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+        return Container(
+          height: needsMinHeight ? cardHeight : null,
+          child: PlayerCard(
+            playerName: user.name,
+            score: user.point,
+            latestRecord: latestRecord,
+            colorIndex: index,
+            onTap: () => onCardTap(index),
+            onLongPress: () => onLongPress(index),
           ),
         );
       }).toList();
@@ -130,16 +77,5 @@ class CardStyleView extends StatelessWidget {
         );
       }
     });
-  }
-
-  Color _getGradientColor(int index, double opacity) {
-    final colors = [
-      Colors.blue,
-      Colors.purple,
-      Colors.pink,
-      Colors.orange,
-      Colors.teal,
-    ];
-    return colors[index % colors.length].withOpacity(opacity);
   }
 }

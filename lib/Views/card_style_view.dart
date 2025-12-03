@@ -4,30 +4,52 @@ import 'package:magic_table/Views/pointing_page.dart';
 
 class CardStyleView extends StatelessWidget {
   final RxList<UserPoint> userPoints;
+  final RxList<Map<String, int>> records;
   final Function(int) onIncrement;
   final Function(int) onDecrement;
+  final Function(int) onCardTap;
+  final Function(int) onLongPress;
 
   const CardStyleView({
     Key? key,
     required this.userPoints,
+    required this.records,
     required this.onIncrement,
     required this.onDecrement,
+    required this.onCardTap,
+    required this.onLongPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      // Calculate available height
       final screenHeight = MediaQuery.of(context).size.height;
-      final topPadding = MediaQuery.of(context).padding.top;
-      final cardHeight = (screenHeight - topPadding - 48) / userPoints.length - 16;
+      final statusBarHeight = MediaQuery.of(context).padding.top;
+      final bottomPadding = MediaQuery.of(context).padding.bottom;
+      final appBarHeight = 56.0; // Standard AppBar height
       
-      return Column(
-        children: userPoints.asMap().entries.map((entry) {
-          final index = entry.key;
-          final user = entry.value;
-          
-          return Container(
-            height: cardHeight,
+      final availableHeight = screenHeight - appBarHeight - statusBarHeight - bottomPadding;
+      
+      // Calculate height per card
+      final numberOfCards = userPoints.length;
+      final totalMargin = numberOfCards * 16.0; // 8px top + 8px bottom per card
+      final calculatedHeight = (availableHeight - totalMargin) / numberOfCards;
+      
+      // Check if we need minimum height and scrolling
+      final needsMinHeight = calculatedHeight < 120;
+      final cardHeight = needsMinHeight ? 120.0 : calculatedHeight;
+      
+      // Build card list
+      final cardsList = userPoints.asMap().entries.map((entry) {
+        final index = entry.key;
+        final user = entry.value;
+        
+        return GestureDetector(
+          onTap: () => onCardTap(index),
+          onLongPress: () => onLongPress(index),
+          child: Container(
+            height: needsMinHeight ? cardHeight : null,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
@@ -59,56 +81,54 @@ class CardStyleView extends StatelessWidget {
                     user.point.toString(),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 120,
-                      fontWeight: FontWeight.w300,
+                      fontSize: 100,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: 16,
-                  left: 16,
-                  child: IconButton(
-                    icon: Container(
-                      width: 48,
-                      height: 48,
+                // Latest record at bottom right
+                if (records.isNotEmpty && records.first.containsKey(user.name))
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
-                        Icons.remove,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                    onPressed: () => onDecrement(index),
-                  ),
-                ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: IconButton(
-                    icon: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 32,
+                      child: Text(
+                        records.first[user.name]! >= 0
+                            ? '+${records.first[user.name]}'
+                            : '${records.first[user.name]}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    onPressed: () => onIncrement(index),
                   ),
-                ),
               ],
             ),
-          );
-        }).toList(),
-      );
+          ),
+        );
+      }).toList();
+      
+      // If needs minimum height, use scrollable ListView
+      // Otherwise use Column with Expanded to fill space evenly
+      if (needsMinHeight) {
+        return ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: cardsList,
+        );
+      } else {
+        return Column(
+          children: cardsList.map((card) {
+            return Expanded(child: card);
+          }).toList(),
+        );
+      }
     });
   }
 

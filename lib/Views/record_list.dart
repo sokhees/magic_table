@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:magic_table/Model/new_record_popup_vm.dart';
 import 'package:magic_table/Model/record_list_vm.dart';
 import 'package:magic_table/Views/new_record_popup.dart';
 
+// ignore: must_be_immutable
 class RecordListView extends StatelessWidget {
   RecordListViewModel viewModel;
   RecordListView(this.viewModel, {Key? key}) : super(key: key);
@@ -13,40 +13,116 @@ class RecordListView extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Column(
-              children: const <Widget>[
-                Text("Updating"),
-                Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                ),
-              ],
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2a2a2a),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.edit_note,
+                    color: Colors.white,
+                    size: 48,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Update Record",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Edit button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        editRecord(context, index);
+                      },
+                      icon: const Icon(Icons.edit, color: Colors.white),
+                      label: const Text(
+                        "Edit",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Delete button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        showConfirmPopUp(context, index);
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.white),
+                      label: const Text(
+                        "Delete",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFff6b6b),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Cancel button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            content: const Text("Select your choice:"),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: const Text("Edit"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  editRecord(context, index);
-                },
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                child: const Text("Delete"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  showConfirmPopUp(context, index);
-                },
-              ),
-              CupertinoDialogAction(
-                child: const Text("Cancel"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
           );
         });
   }
@@ -55,25 +131,93 @@ class RecordListView extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: const Text("Warning!!" , style: TextStyle(color: Colors.red),),
-            content: const Text("Are you want to delete the record.?"),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                child: const Text("Delete"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  viewModel.records.removeAt(index);
-                },
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2a2a2a),
+                borderRadius: BorderRadius.circular(20),
               ),
-              CupertinoDialogAction(
-                child: const Text("Cancel"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.warning_rounded,
+                    color: Color(0xFFff6b6b),
+                    size: 48,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Delete Record?",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "This action cannot be undone",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Delete button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        viewModel.records.removeAt(index);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFff6b6b),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Cancel button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           );
         });
   }
@@ -102,49 +246,67 @@ class RecordListView extends StatelessWidget {
         });
   }
 
-  Widget recordWidget(BuildContext context, List<int> record) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 1),
+  Widget recordWidget(BuildContext context, List<int> record, int recordIndex) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2a2a2a),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF4a4a4a),
+          width: 1,
+        ),
+      ),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: record
-              .map((e) => Expanded(
-                      child: Container(
-                    height: 50,
-                    color: Colors.amber[500],
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Center(
-                              child: Text(
-                            e.toString(),
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18),
-                          )),
+        children: record.asMap().entries.map((entry) {
+          final index = entry.key;
+          final value = entry.value;
+          final isPositive = value >= 0;
+          
+          return Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                border: index < record.length - 1
+                    ? const Border(
+                        right: BorderSide(
+                          color: Color(0xFF4a4a4a),
+                          width: 1,
                         ),
-                        Container(height: 50, width: 1, color: Colors.black26)
-                      ],
-                    ),
-                  )))
-              .toList()),
+                      )
+                    : null,
+              ),
+              child: Text(
+                value.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isPositive ? const Color.fromARGB(255, 218, 232, 60) : const Color(0xFFff6b6b),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Expanded(
-            child: ListView(
-          padding: const EdgeInsets.only(top: 10),
+    return Obx(() => ListView(
+          padding: const EdgeInsets.only(top: 4),
           children: viewModel.records.map((e) {
             var arrayData = viewModel.userPoints
                 .map((element) => e[element.name] ?? 0)
                 .toList();
+            final recordIndex = viewModel.records.indexOf(e);
             return GestureDetector(
                 onLongPress: () {
-                  showOptionDialog(context, viewModel.records.indexOf(e));
+                  showOptionDialog(context, recordIndex);
                 },
-                child: recordWidget(context, arrayData));
+                child: recordWidget(context, arrayData, recordIndex));
           }).toList(),
-        )));
+        ));
   }
 }

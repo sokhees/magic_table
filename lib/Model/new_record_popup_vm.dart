@@ -55,10 +55,17 @@ class NewRecordPopUpViewModel extends GetxController {
         total += (value.isNegative ? -1 : 1) * value.point;
       }
     });
-    int point = total * -1;
+    // Winner gets opposite of losers' total
+    // If losers total is +5, winner loses 5 (gets -5)
+    // If losers total is -10, winner gains 10 (gets +10)
+    int winnerPoint = -total;
     if (winner.isNotEmpty) {
-      records[winner] = RoundPoint(point: point < 0 ? point * -1 : point, isNegative: point < 0, isWinner: true);
-      textViewControllers[winner]?.text = (point < 0 ? point * -1 : point).toString();
+      records[winner] = RoundPoint(
+        point: winnerPoint.abs(), 
+        isNegative: winnerPoint < 0, 
+        isWinner: true
+      );
+      textViewControllers[winner]?.text = winnerPoint.abs().toString();
     }
   }
 
@@ -83,7 +90,7 @@ class NewRecordPopUpViewModel extends GetxController {
 
   bool isAllZeroValue() {
     try {
-      var record = records.values.firstWhere((element) => element.point != 0);
+      records.values.firstWhere((element) => element.point != 0);
       return false;
     } catch(e) {
       return true;

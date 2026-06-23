@@ -78,8 +78,8 @@ class LoserPointInput extends StatelessWidget {
                   decimal: false,
                 ),
                 style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 29,
+                  fontWeight: FontWeight.w100,
                   color: Colors.black,
                 ),
                 decoration: const InputDecoration(

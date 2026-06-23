@@ -42,7 +42,26 @@ class NewRecordPopup extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('👑 SELECT WINNER', style: AppTextStyles.sectionLabel),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('👑 SELECT WINNER', style: AppTextStyles.sectionLabel),
+              Obx(() {
+                final winnerName = viewModel.getWinnerName();
+                final point = winnerName.isEmpty
+                    ? 0
+                    : viewModel.records[winnerName]!.point;
+                return Text(
+                  winnerName.isEmpty ? '+ $point' : '$winnerName : + $point',
+                  style: const TextStyle(
+                    color: Color(0xFF4CAF50),
+                    fontSize: 32,
+                    fontWeight: FontWeight.w100,
+                  ),
+                );
+              }),
+            ],
+          ),
           const SizedBox(height: 12),
           WinnerSelectionTabs(
             players: players,

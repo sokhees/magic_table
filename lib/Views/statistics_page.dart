@@ -242,10 +242,26 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         const SizedBox(height: 6),
 
                         _buildStatCard(
+                          title: 'Chuỗi thua dài nhất',
+                          value: '${stat.maxLossStreak} ván',
+                          icon: Icons.trending_down,
+                          color: const Color(0xFFff6b6b),
+                        ),
+                        const SizedBox(height: 6),
+
+                        _buildStatCard(
                           title: 'Tổng điểm nhiều nhất liên tục',
                           value: stat.maxConsecutivePoints.toString(),
                           icon: Icons.trending_up,
                           color: const Color(0xFF4caf50),
+                        ),
+                        const SizedBox(height: 6),
+
+                        _buildStatCard(
+                          title: 'Số điểm thua liên tục nhiều nhất',
+                          value: stat.maxConsecutiveLossPoints.toString(),
+                          icon: Icons.arrow_downward,
+                          color: const Color(0xFFe91e63),
                         ),
                         const SizedBox(height: 6),
 

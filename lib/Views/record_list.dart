@@ -281,8 +281,8 @@ class RecordListView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isPositive ? const Color.fromARGB(255, 218, 232, 60) : const Color(0xFFff6b6b),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w100,
                 ),
               ),
             ),

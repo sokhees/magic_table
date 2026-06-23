@@ -29,29 +29,21 @@ class WinnerSelectionTabs extends StatelessWidget {
                 ? Border.all(color: Colors.white.withOpacity(0.3), width: 2)
                 : null,
           ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    name.toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: isWinner ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                  ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                name.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: isWinner ? FontWeight.bold : FontWeight.normal,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
               ),
-              if (isWinner) ...[
-                const SizedBox(height: 4),
-                const Text('🎯', style: TextStyle(fontSize: 20)),
-              ],
-            ],
+            ),
           ),
         ),
       ),
@@ -144,8 +136,6 @@ class WinnerSelectionTabs extends StatelessWidget {
                         ))
                     .toList(),
               ),
-            const SizedBox(height: 6),
-            _buildWinnerPointsDisplay(),
           ],
         ),
       );

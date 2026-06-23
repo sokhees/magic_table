@@ -6,7 +6,9 @@ class PlayerStatistics {
   int totalWins = 0;
   int totalLosses = 0;
   int maxWinStreak = 0;
+  int maxLossStreak = 0; // Chuỗi thua dài nhất
   int maxConsecutivePoints = 0;
+  int maxConsecutiveLossPoints = 0; // Số điểm thua liên tục nhiều nhất
   int totalSamRounds = 0; // Tổng số ván Sâm (tất cả người khác bị -20)
   int totalCatchSamRounds = 0; // Tổng số ván bắt sâm (điểm = số người * 20)
   int totalTreoRounds = 0; // Tổng số ván treo (bị -15)
@@ -31,12 +33,16 @@ class StatisticsViewModel extends GetxController {
 
     // Theo dõi chuỗi thắng và điểm liên tục
     Map<String, int> currentWinStreak = {};
+    Map<String, int> currentLossStreak = {};
     Map<String, int> currentPointsStreak = {};
+    Map<String, int> currentLossPointsStreak = {};
     Map<String, int> lastPoints = {};
     
     for (var player in userPoints) {
       currentWinStreak[player.name] = 0;
+      currentLossStreak[player.name] = 0;
       currentPointsStreak[player.name] = 0;
+      currentLossPointsStreak[player.name] = 0;
       lastPoints[player.name] = 0;
     }
 
@@ -64,9 +70,14 @@ class StatisticsViewModel extends GetxController {
           if (currentWinStreak[name]! > stat.maxWinStreak) {
             stat.maxWinStreak = currentWinStreak[name]!;
           }
+          currentLossStreak[name] = 0;
         } else {
           stat.totalLosses++;
           currentWinStreak[name] = 0;
+          currentLossStreak[name] = (currentLossStreak[name] ?? 0) + 1;
+          if (currentLossStreak[name]! > stat.maxLossStreak) {
+            stat.maxLossStreak = currentLossStreak[name]!;
+          }
         }
 
         // 4. Tổng điểm liên tục nhiều nhất
@@ -75,8 +86,14 @@ class StatisticsViewModel extends GetxController {
           if (currentPointsStreak[name]! > stat.maxConsecutivePoints) {
             stat.maxConsecutivePoints = currentPointsStreak[name]!;
           }
+          currentLossPointsStreak[name] = 0;
         } else {
           currentPointsStreak[name] = 0;
+          // Tính điểm thua liên tục (giá trị tuyệt đối của điểm âm)
+          currentLossPointsStreak[name] = (currentLossPointsStreak[name] ?? 0) + (points.abs());
+          if (currentLossPointsStreak[name]! > stat.maxConsecutiveLossPoints) {
+            stat.maxConsecutiveLossPoints = currentLossPointsStreak[name]!;
+          }
         }
 
         // 5. Ván Sâm: Người thắng và tất cả người khác bị -20

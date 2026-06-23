@@ -18,7 +18,8 @@ class PlayerSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        height: 80,
+        height: 90,
+        margin: const EdgeInsets.all(4),
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           gradient: AppColors.playerGradient(colorIndex),

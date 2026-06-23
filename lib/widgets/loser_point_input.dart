@@ -43,36 +43,74 @@ class LoserPointInput extends StatelessWidget {
           ),
           const Spacer(),
           
-          // Toggle +/- button
-          Container(
-            width: 48,
-            height: 48,
+          // Segmented +/- toggle
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            width: 100,
+            height: 52,
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: record.isNegative ? AppColors.error : AppColors.success,
-              shape: BoxShape.circle,
-            ),
-            child: IconButton(
-              icon: Icon(
-                record.isNegative ? Icons.remove : Icons.add,
-                color: Colors.white,
+              color: Colors.white.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: record.isNegative
+                    ? AppColors.error.withOpacity(0.8)
+                    : AppColors.success.withOpacity(0.8),
+                width: 1.4,
               ),
-              onPressed: onToggleSign,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _SignSegment(
+                    label: '-',
+                    isActive: record.isNegative,
+                    activeColor: AppColors.error,
+                    onTap: () {
+                      if (!record.isNegative) {
+                        onToggleSign();
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 3),
+                Expanded(
+                  child: _SignSegment(
+                    label: '+',
+                    isActive: !record.isNegative,
+                    activeColor: AppColors.success,
+                    onTap: () {
+                      if (record.isNegative) {
+                        onToggleSign();
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 12),
           
           // Input field
           Container(
-            height: 48,
+            height: 52,
             width: 60,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: record.isNegative
+                    ? AppColors.error.withOpacity(0.9)
+                    : AppColors.success.withOpacity(0.9),
+                width: 2.2,
+              ),
             ),
             child: AutoHideKeyboard(
               child: TextField(
                 controller: controller,
                 textAlign: TextAlign.center,
+                textAlignVertical: TextAlignVertical.center,
                 keyboardType: const TextInputType.numberWithOptions(
                   signed: false,
                   decimal: false,
@@ -84,13 +122,76 @@ class LoserPointInput extends StatelessWidget {
                 ),
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 12),
         ],
+      ),
+    );
+  }
+}
+
+class _SignSegment extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final Color activeColor;
+  final VoidCallback onTap;
+
+  const _SignSegment({
+    required this.label,
+    required this.isActive,
+    required this.activeColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedScale(
+          scale: isActive ? 1.0 : 0.95,
+          duration: const Duration(milliseconds: 260),
+          curve: Curves.elasticOut,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            decoration: BoxDecoration(
+              color: isActive ? activeColor : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isActive
+                    ? Colors.white.withOpacity(0.28)
+                    : Colors.white.withOpacity(0.12),
+              ),
+              boxShadow: isActive
+                  ? [
+                      BoxShadow(
+                        color: activeColor.withOpacity(0.48),
+                        blurRadius: 10,
+                        spreadRadius: 0.8,
+                      ),
+                    ]
+                  : null,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 34,
+                fontWeight: FontWeight.w700,
+                height: 1,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -86,6 +86,7 @@ class NewRecordPopUpViewModel extends GetxController {
       // The bellow line needed for updating UI
       records[element] = records[element]!;
     }
+    calculateWinnerPoint();
   }
 
   bool isAllZeroValue() {
